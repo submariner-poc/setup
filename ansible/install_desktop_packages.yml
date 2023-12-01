@@ -1,0 +1,22 @@
+---
+
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+- name: Install desktop packages
+  apt:
+    name:
+      - ubuntu-desktop
+      - firefox
+      - gimp
+      - libreoffice
+      - vlc
+      - xrdp
+    state: present
+
+- name: Enable remote desktop (XRDP)
+  systemd:
+    name: xrdp
+    enabled: yes
+    state: started

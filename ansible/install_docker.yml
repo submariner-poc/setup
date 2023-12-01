@@ -1,0 +1,46 @@
+---
+- name: Check if Docker is installed
+  command: docker --version
+  ignore_errors: yes
+  register: docker_check
+- name: Install required packages for Docker
+  apt:
+    update_cache: yes
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg-agent
+      - software-properties-common
+    state: present
+
+- name: Add Docker GPG key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Add Docker APT repository
+  apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+    state: present
+
+- name: Install Docker
+  apt:
+    name: docker-ce
+    state: present
+  when: docker_check.rc != 0  # Install only if Docker is not installed
+
+- name: Add user to the docker group (optional)
+  user:
+    name: "{{ ansible_ssh_user }}"
+    groups: docker
+    append: yes
+  become: yes
+  when: docker_check.rc == 0  # Add user to docker group only if Docker is installed
+  
+- name: Start Docker service
+  service:
+    name: docker
+    state: started
+    enabled: yes
+  when: docker_check.rc == 0  # Start Docker service only if Docker is installed

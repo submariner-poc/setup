@@ -1,0 +1,12 @@
+---
+- name: Check if Helm is installed
+  shell: helm version --short
+  register: helm_check
+  ignore_errors: true
+
+- name: Install Helm
+  shell: |
+    curl -LO "https://get.helm.sh/helm-v{{ version }}-linux-amd64.tar.gz"
+    tar -zxvf helm-v{{ helm_version }}-linux-amd64.tar.gz
+    sudo mv linux-amd64/helm /usr/local/bin/
+  when: helm_check.rc != 0
