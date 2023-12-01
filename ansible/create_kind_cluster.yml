@@ -1,14 +1,14 @@
 ---
 
  - name: Check if Kind Cluster exists
-   command: kind get clusters | grep -q "{{ cluster_name }}"
-   register: cluster_exists
+   command: kind get clusters
+   register: kind_clusters
+   changed_when: false
    ignore_errors: true
 
  - name: Create Kind Cluster
    command: kind create cluster --name "{{ cluster_name }}"
-   when: cluster_exists.rc != 0
+   when: "'{{ cluster_name }}' not in kind_clusters.stdout_lines"
 
  - name: Export Kind Cluster Kubeconfig
    command: kind export kubeconfig --name "{{ cluster_name }}" --kubeconfig "/home/vagrant/.kube/config"
-   when: cluster_exists.rc != 0

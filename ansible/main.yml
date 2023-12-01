@@ -8,7 +8,8 @@
     kind_version: "0.20.0"
     kubectl_version: "1.27.0" 
     kind_cluster_name: "east"   
-    helm_version: "3.6.3"         
+    helm_version: "3.6.3"  
+    argocd_helm_repo_url: "https://github.com/submariner-poc/argocd.git"             
 
   tasks:
     - name: Update apt cache
@@ -43,3 +44,8 @@
       include_tasks: create_kind_cluster.yml  
       vars:
         cluster_name: "{{ kind_cluster_name }}"
+
+    - name: Deploy Argocd
+      include_tasks: deploy_argocd.yml  
+      vars:
+        repo_url: "{{ argocd_helm_repo_url }}"        

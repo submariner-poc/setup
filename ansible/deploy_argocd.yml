@@ -1,0 +1,8 @@
+---
+
+- name: Clone Git Repository
+  git:
+    repo: "{{ repo_url }}"
+    dest: "argocd"
+    version: main
+    force: yes
