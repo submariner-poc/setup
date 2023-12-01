@@ -1,8 +1,14 @@
 ---
 
+- name: Remove directory
+  command: rm -rf "{{ target_directory }}"
+
 - name: Clone Git Repository
   git:
     repo: "{{ repo_url }}"
-    dest: "argocd"
+    dest: "{{ target_directory }}"
     version: main
     force: yes
+
+- name: Deploy ArgoCD Helm chart
+  command: helm upgrade -f {{ target_directory }}/argo-helm/charts/argo-cd/values.yaml argocd {{ target_directory }}/argo-helm/charts/argo-cd -n argocd --install --create-namespace     
